@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="65dp"
+    android:layout_height="80dp"
+    >
+
+    <com.luck.picture.lib.widget.SquareRelativeLayout
+        android:id="@+id/select_frame"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_select_stroke_frame"
+        android:padding="1dp">
+
+        <ImageView
+            android:id="@+id/iv_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/image_placeholder" />
+
+    </com.luck.picture.lib.widget.SquareRelativeLayout>
+</RelativeLayout>

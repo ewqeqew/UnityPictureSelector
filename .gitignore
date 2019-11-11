@@ -1,0 +1,15 @@
+*.iml
+.DS_Store
+.gradle
+.externalNativeBuild
+local.properties
+.idea/
+.idea/caches
+.idea/codeStyles
+.idea/inspectionProfiles
+.idea/libraries
+.idea/workspace.xml
+.idea/modules.xml
+build
+captures
+jcncodepush/app/build
