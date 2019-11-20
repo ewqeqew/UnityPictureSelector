@@ -123,7 +123,7 @@ public class SimpleFragmentAdapter extends PagerAdapter {
                         .asBitmap()
                         .load(path)
                         .apply(options)
-                        .into(new SimpleTarget<Bitmap>(480, 800) {
+                        .into(new SimpleTarget<Bitmap>() {
                             @Override
                             public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                                 if (eqLongImg) {
@@ -173,12 +173,12 @@ public class SimpleFragmentAdapter extends PagerAdapter {
      * @param longImg
      */
     private void displayLongPic(Bitmap bmp, SubsamplingScaleImageView longImg) {
-        longImg.setQuickScaleEnabled(true);
-        longImg.setZoomEnabled(true);
-        longImg.setPanEnabled(true);
-        longImg.setDoubleTapZoomDuration(100);
-        longImg.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
-        longImg.setDoubleTapZoomDpi(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
+//        longImg.setQuickScaleEnabled(true);
+//        longImg.setZoomEnabled(true);
+//        longImg.setPanEnabled(true);
+//        longImg.setDoubleTapZoomDuration(100);
+//        longImg.setMinimumScaleType(SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP);
+//        longImg.setDoubleTapZoomDpi(SubsamplingScaleImageView.ZOOM_FOCUS_CENTER);
         longImg.setImage(ImageSource.cachedBitmap(bmp), new ImageViewState(0, new PointF(0, 0), 0));
     }
 }

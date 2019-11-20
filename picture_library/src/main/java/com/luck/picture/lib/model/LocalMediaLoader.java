@@ -59,7 +59,8 @@ public class LocalMediaLoader {
             MediaStore.MediaColumns.MIME_TYPE,
             MediaStore.MediaColumns.WIDTH,
             MediaStore.MediaColumns.HEIGHT,
-            MediaStore.Video.Media.DURATION
+            MediaStore.Video.Media.DURATION,
+            MediaStore.Images.ImageColumns.ORIENTATION
     };
 
     /**
@@ -197,6 +198,15 @@ public class LocalMediaLoader {
 
                                 long duration = data.getLong
                                         (data.getColumnIndexOrThrow(PROJECTION[5]));
+
+                                long degrees = data.getInt
+                                        (data.getColumnIndexOrThrow(PROJECTION[6]));
+                                if(degrees==90||degrees==270){
+                                    w = data.getInt
+                                            (data.getColumnIndexOrThrow(PROJECTION[4]));
+                                    h = data.getInt
+                                            (data.getColumnIndexOrThrow(PROJECTION[3]));
+                                }
 
                                 if (type == PictureConfig.TYPE_VIDEO) {
                                     if (duration == 0) {
