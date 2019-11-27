@@ -90,6 +90,7 @@ public class PictureExternalPreviewActivity extends PictureBaseActivity implemen
         directory_path = getIntent().getStringExtra(PictureConfig.DIRECTORY_PATH);
         images = (List<LocalMedia>) getIntent().getSerializableExtra(PictureConfig.EXTRA_PREVIEW_SELECT_LIST);
         left_back.setOnClickListener(this);
+        findViewById(R.id.ext_main_ll).setOnClickListener(this);
         initViewPageAdapterData();
     }
 
