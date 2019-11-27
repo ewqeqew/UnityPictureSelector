@@ -92,6 +92,7 @@ public class PictureExternalPreviewActivity extends PictureBaseActivity implemen
         left_back.setOnClickListener(this);
         findViewById(R.id.ext_main_ll).setOnClickListener(this);
         initViewPageAdapterData();
+
     }
 
     private void initViewPageAdapterData() {
