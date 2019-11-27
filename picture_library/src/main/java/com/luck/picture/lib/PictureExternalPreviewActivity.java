@@ -324,6 +324,7 @@ public class PictureExternalPreviewActivity extends PictureBaseActivity implemen
                                 System.currentTimeMillis() + ".png", directory_path);
                         PictureFileUtils.copyFile(path, dirPath);
                         ToastManage.s(mContext, getString(R.string.picture_save_success) + "\n" + dirPath);
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(dirPath))));
                         dismissDialog();
                     } catch (IOException e) {
                         ToastManage.s(mContext, getString(R.string.picture_save_error) + "\n" + e.getMessage());
