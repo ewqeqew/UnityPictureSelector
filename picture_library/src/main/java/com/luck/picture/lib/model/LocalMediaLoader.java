@@ -135,8 +135,7 @@ public class LocalMediaLoader {
         this.isGif = isGif;
         this.videoMaxS = videoMaxS;
         this.videoMinS = videoMinS;
-//        this.isAndroidQ = SdkVersionUtils.checkedAndroid_Q();
-        this.isAndroidQ = false;
+        this.isAndroidQ = SdkVersionUtils.checkedAndroid_Q();
     }
 
     public void loadAllMedia(final LocalMediaLoadListener imageLoadListener) {
