@@ -226,7 +226,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         picture_left_back.setOnClickListener(this);
         picture_right.setOnClickListener(this);
         id_ll_ok.setOnClickListener(this);
-//        picture_title.setOnClickListener(this);
+        picture_title.setOnClickListener(this);
         String title = config.mimeType == PictureMimeType.ofAudio() ?
                 getString(R.string.picture_all_audio)
                 : getString(R.string.picture_camera_roll);
