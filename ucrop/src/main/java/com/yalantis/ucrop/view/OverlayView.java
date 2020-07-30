@@ -228,7 +228,7 @@ public class OverlayView extends View {
         }
 
         if (mCallback != null) {
-            mCallback.onCropRectUpdated(mCropViewRect);
+//            mCallback.onCropRectUpdated(mCropViewRect);
         }
 
         updateGridPoints();
@@ -339,25 +339,57 @@ public class OverlayView extends View {
             case 0:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    mTempRect.set(touchX, touchY, mCropViewRect.right, mCropViewRect.bottom);
+                    if(Math.abs(touchX - mPreviousTouchX)>Math.abs(touchY - mPreviousTouchY)){
+                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.top+(touchX - mPreviousTouchX)*mTargetAspectRatio>=getPaddingTop()){
+                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top+(touchX - mPreviousTouchX)*mTargetAspectRatio, mCropViewRect.right, mCropViewRect.bottom);
+                        }
+                    }else{
+                        if(mCropViewRect.top+(touchY - mPreviousTouchY)>=getPaddingTop()&&mCropViewRect.left+(touchY - mPreviousTouchY)*mTargetAspectRatio>=getPaddingLeft()){
+                            mTempRect.set(mCropViewRect.left+(touchY - mPreviousTouchY)*mTargetAspectRatio, mCropViewRect.top+(touchY - mPreviousTouchY), mCropViewRect.right, mCropViewRect.bottom);
+                        }
+                    }
                 }
                 break;
             case 1:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    mTempRect.set(mCropViewRect.left, touchY, touchX, mCropViewRect.bottom);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
+                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.top - (touchX - mPreviousTouchX) * mTargetAspectRatio >= getPaddingTop()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top - (touchX - mPreviousTouchX) * mTargetAspectRatio, mCropViewRect.right + touchX - mPreviousTouchX, mCropViewRect.bottom);
+                        }
+                    } else {
+                        if (mCropViewRect.top + (touchY - mPreviousTouchY) >= getPaddingTop() && mCropViewRect.right - (touchY - mPreviousTouchY) * mTargetAspectRatio <= getWidth()-getPaddingRight()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top + (touchY - mPreviousTouchY), mCropViewRect.right - (touchY - mPreviousTouchY) * mTargetAspectRatio, mCropViewRect.bottom);
+                        }
+                    }
                 }
                 break;
             case 2:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    mTempRect.set(mCropViewRect.left, mCropViewRect.top, touchX, touchY);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
+                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.bottom+(touchX - mPreviousTouchX) * mTargetAspectRatio <= getHeight()-getPaddingBottom()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.right + (touchX - mPreviousTouchX), mCropViewRect.bottom+(touchX - mPreviousTouchX) * mTargetAspectRatio);
+                        }
+                    } else {
+                        if (mCropViewRect.right + (touchY - mPreviousTouchY) * mTargetAspectRatio <= getWidth()-getPaddingRight() && mCropViewRect.bottom + (touchY - mPreviousTouchY) <= getHeight()-getPaddingBottom()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.right + (touchY - mPreviousTouchY) * mTargetAspectRatio, mCropViewRect.bottom + (touchY - mPreviousTouchY));
+                        }
+                    }
                 }
                 break;
             case 3:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    mTempRect.set(touchX, mCropViewRect.top, mCropViewRect.right, touchY);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
+                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.bottom - (touchX - mPreviousTouchX)*mTargetAspectRatio <= getHeight()-getPaddingBottom()){
+                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top, mCropViewRect.right, mCropViewRect.bottom-(touchX - mPreviousTouchX)*mTargetAspectRatio);
+                        }
+                    } else {
+                        if (mCropViewRect.left-(touchY - mPreviousTouchY)*mTargetAspectRatio >=getPaddingLeft() && mCropViewRect.bottom + (touchY - mPreviousTouchY) <= getHeight()-getPaddingBottom()) {
+                            mTempRect.set(mCropViewRect.left-(touchY - mPreviousTouchY)*mTargetAspectRatio, mCropViewRect.top, mCropViewRect.right , mCropViewRect.bottom + (touchY - mPreviousTouchY));
+                        }
+                    }
                 }
                 break;
             // move rectangle
@@ -379,7 +411,6 @@ public class OverlayView extends View {
                 changeHeight ? mTempRect.top : mCropViewRect.top,
                 changeWidth ? mTempRect.right : mCropViewRect.right,
                 changeHeight ? mTempRect.bottom : mCropViewRect.bottom);
-
         if (changeHeight || changeWidth) {
             updateGridPoints();
             postInvalidate();

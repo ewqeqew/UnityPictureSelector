@@ -184,6 +184,13 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
             contentHolder.tv_long_chart.setVisibility(eqLongImg ? View.VISIBLE : View.GONE);
             long duration = image.getDuration();
             contentHolder.tv_duration.setText(DateUtils.timeParse(duration));
+            if(duration>15*1000){
+                contentHolder.count_select_tv.setVisibility(View.VISIBLE);
+                contentHolder.check.setVisibility(View.GONE);
+            }else{
+                contentHolder.count_select_tv.setVisibility(View.GONE);
+                contentHolder.check.setVisibility(View.VISIBLE);
+            }
             if (mimeType == PictureMimeType.ofAudio()) {
                 contentHolder.iv_picture.setImageResource(R.drawable.audio_placeholder);
             } else {
@@ -229,11 +236,11 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
                     }
                     int index = showCamera ? position - 1 : position;
                     boolean eqResult =
-                            mediaMimeType == PictureConfig.TYPE_IMAGE && enablePreview
-                                    || mediaMimeType == PictureConfig.TYPE_VIDEO && (enablePreviewVideo
-                                    || selectMode == PictureConfig.SINGLE)
-                                    || mediaMimeType == PictureConfig.TYPE_AUDIO && (enablePreviewAudio
-                                    || selectMode == PictureConfig.SINGLE);
+                            mediaMimeType == PictureConfig.TYPE_IMAGE && enablePreview;
+//                                    || mediaMimeType == PictureConfig.TYPE_VIDEO && (enablePreviewVideo
+//                                    || selectMode == PictureConfig.SINGLE)
+//                                    || mediaMimeType == PictureConfig.TYPE_AUDIO && (enablePreviewAudio
+//                                    || selectMode == PictureConfig.SINGLE);
                     if (eqResult) {
                         imageSelectChangedListener.onPictureClick(image, index);
                     } else {
@@ -268,7 +275,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView iv_picture;
         TextView check;
-        TextView tv_duration, tv_isGif, tv_long_chart;
+        TextView tv_duration, tv_isGif, tv_long_chart,count_select_tv;
         View contentView;
         LinearLayout ll_check;
 
@@ -279,6 +286,7 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
             check = (TextView) itemView.findViewById(R.id.check);
             ll_check = (LinearLayout) itemView.findViewById(R.id.ll_check);
             tv_duration = (TextView) itemView.findViewById(R.id.tv_duration);
+            count_select_tv = (TextView) itemView.findViewById(R.id.count_select_tv);
             tv_isGif = (TextView) itemView.findViewById(R.id.tv_isGif);
             tv_long_chart = (TextView) itemView.findViewById(R.id.tv_long_chart);
         }
@@ -331,7 +339,10 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
             ToastManage.s(context, str);
             return;
         }
-
+        if(image.getDuration()>15*1000&&image.getMimeType()==PictureConfig.TYPE_VIDEO){
+            ToastManage.s(context, context.getString(R.string.video_too_long));
+            return;
+        }
         if (isChecked) {
             for (LocalMedia media : selectImages) {
                 if (media.getPath().equals(image.getPath())) {

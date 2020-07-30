@@ -201,6 +201,10 @@ public class TransformImageView extends ImageView {
         updateCurrentImagePoints();
     }
 
+    public Matrix getCurrentMatrix(){
+        return mCurrentImageMatrix;
+    }
+
     @Nullable
     public Bitmap getViewBitmap() {
         if (getDrawable() == null || !(getDrawable() instanceof FastBitmapDrawable)) {

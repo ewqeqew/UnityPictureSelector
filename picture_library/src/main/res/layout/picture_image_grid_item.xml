@@ -9,6 +9,13 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/image_placeholder" />
+    <TextView
+        android:id="@+id/count_select_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/ucrop_color_default_crop_grid"
+        android:visibility="gone"
+        />
 
     <LinearLayout
         android:id="@+id/ll_check"

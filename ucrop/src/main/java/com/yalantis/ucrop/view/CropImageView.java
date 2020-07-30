@@ -6,7 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Debug;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -47,7 +51,7 @@ public class CropImageView extends TransformImageView {
 
     private CropBoundsChangeListener mCropBoundsChangeListener;
 
-    private Runnable mWrapCropBoundsRunnable, mZoomImageToPositionRunnable = null;
+    private Runnable mWrapCropBoundsRunnable, mZoomImageToPositionRunnable,mRotateImageToRotationRunnable = null;
 
     private float mMaxScale, mMinScale;
     private int mMaxResultImageSizeX = 0, mMaxResultImageSizeY = 0;
@@ -248,8 +252,9 @@ public class CropImageView extends TransformImageView {
      *
      * @param deltaAngle - angle to rotate
      */
-    public void postRotate(float deltaAngle) {
-        postRotate(deltaAngle, mCropRect.centerX(), mCropRect.centerY());
+    public void postRotate(final float deltaAngle) {
+        post(new RotateImageToRotation(CropImageView.this,
+                200,deltaAngle, mCropRect.centerX(), mCropRect.centerY()));
     }
 
     /**
@@ -258,6 +263,7 @@ public class CropImageView extends TransformImageView {
     public void cancelAllAnimations() {
         removeCallbacks(mWrapCropBoundsRunnable);
         removeCallbacks(mZoomImageToPositionRunnable);
+        removeCallbacks(mRotateImageToRotationRunnable);
     }
 
     public void setImageToWrapCropBounds() {
@@ -619,6 +625,64 @@ public class CropImageView extends TransformImageView {
                 cropImageView.zoomInImage(mOldScale + newScale, mDestX, mDestY);
                 cropImageView.post(this);
             } else {
+                cropImageView.setImageToWrapCropBounds();
+            }
+        }
+
+    }
+
+    /**
+     * 旋转动画
+     */
+    private static class RotateImageToRotation implements Runnable {
+
+        private final WeakReference<CropImageView> mCropImageView;
+
+        private final long mDurationMs, mStartTime;
+        private final float mDeltaAngle;
+        private final float mDestX;
+        private final float mDestY;
+        private  float totalAngle;
+        private float lastAngle;
+
+        public RotateImageToRotation(CropImageView cropImageView,
+                                   long durationMs,
+                                   float angle,
+                                   float destX, float destY) {
+
+            mCropImageView = new WeakReference<>(cropImageView);
+
+            mStartTime = System.currentTimeMillis();
+            mDurationMs = durationMs;
+            mDeltaAngle = angle;
+            mDestX = destX;
+            mDestY = destY;
+            lastAngle = 0;
+            totalAngle = 0;
+        }
+
+        @Override
+        public void run() {
+            CropImageView cropImageView = mCropImageView.get();
+            if (cropImageView == null) {
+                return;
+            }
+
+            long now = System.currentTimeMillis();
+            float currentMs = now - mStartTime;
+            float newAngle = currentMs/(float)mDurationMs*mDeltaAngle;
+            if (currentMs < mDurationMs) {
+                cropImageView.postRotate(newAngle-lastAngle, mDestX, mDestY);
+//                Log.d("每次旋转",(newAngle-lastAngle)+"");
+//                totalAngle = totalAngle+(newAngle-lastAngle);
+//                Log.d("总共旋转",totalAngle+"");
+                lastAngle = newAngle;
+                cropImageView.post(this);
+            } else {
+                cropImageView.postRotate(mDeltaAngle-lastAngle, mDestX, mDestY);
+//                Log.d("每次旋转",(mDeltaAngle-lastAngle)+"");
+//                totalAngle = totalAngle+(mDeltaAngle-lastAngle);
+//                Log.d("总共旋转",totalAngle+"");
                 cropImageView.setImageToWrapCropBounds();
             }
         }

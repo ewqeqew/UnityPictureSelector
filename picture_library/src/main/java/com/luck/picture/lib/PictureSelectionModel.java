@@ -150,6 +150,14 @@ public class PictureSelectionModel {
         selectionConfig.aspect_ratio_y = aspect_ratio_y;
         return this;
     }
+    public PictureSelectionModel directCrop(boolean directCrop) {
+        selectionConfig.directCrop = directCrop;
+        return this;
+    }
+    public PictureSelectionModel inputImgPath(String inputImgPath) {
+        selectionConfig.inputImgPath = inputImgPath;
+        return this;
+    }
 
     /**
      * @param maxSelectNum PictureSelector max selection

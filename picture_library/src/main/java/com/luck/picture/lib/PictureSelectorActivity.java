@@ -156,6 +156,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         if (!RxBus.getDefault().isRegistered(this)) {
             RxBus.getDefault().register(this);
         }
+        if(config.directCrop){
+            startCrop(config.inputImgPath);
+        }
         rxPermissions = new RxPermissions(this);
         if (config.camera) {
             if (savedInstanceState == null) {
@@ -898,7 +901,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                     break;
             }
         } else if (resultCode == RESULT_CANCELED) {
-            if (config.camera) {
+            if (config.camera||config.directCrop) {
                 closeActivity();
             }
         } else if (resultCode == UCrop.RESULT_ERROR) {
@@ -1038,32 +1041,47 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         Uri resultUri = UCrop.getOutput(data);
         String cutPath = resultUri.getPath();
         String imageType;
-        if (adapter != null) {
-            // 取单张裁剪已选中图片的path作为原图
-            List<LocalMedia> mediaList = adapter.getSelectedImages();
-            LocalMedia media = mediaList != null && mediaList.size() > 0 ? mediaList.get(0) : null;
-            if (media != null) {
-                originalPath = media.getPath();
-                media = new LocalMedia(originalPath, media.getDuration(), false,
-                        media.getPosition(), media.getNum(), config.mimeType);
-                media.setCutPath(cutPath);
-                media.setCut(true);
-                imageType = PictureMimeType.createImageType(cutPath);
-                media.setPictureType(imageType);
-                medias.add(media);
-                handlerResult(medias);
-            }
-        } else if (config.camera) {
-            // 单独拍照
-            LocalMedia media = new LocalMedia(cameraPath, 0, false,
-                    config.isCamera ? 1 : 0, 0, config.mimeType);
+        if(config.directCrop){
+            LocalMedia media = new LocalMedia(config.inputImgPath, 0, false,
+                    0 , 0, config.mimeType);
             media.setCut(true);
             media.setCutPath(cutPath);
             imageType = PictureMimeType.createImageType(cutPath);
             media.setPictureType(imageType);
             medias.add(media);
-            handlerResult(medias);
+//            handlerResult(medias);
+            Intent intent = PictureSelector.putIntentResult(medias);
+            setResult(RESULT_OK, intent);
+            closeActivity();
+        }else{
+            if (adapter != null) {
+                // 取单张裁剪已选中图片的path作为原图
+                List<LocalMedia> mediaList = adapter.getSelectedImages();
+                LocalMedia media = mediaList != null && mediaList.size() > 0 ? mediaList.get(0) : null;
+                if (media != null) {
+                    originalPath = media.getPath();
+                    media = new LocalMedia(originalPath, media.getDuration(), false,
+                            media.getPosition(), media.getNum(), config.mimeType);
+                    media.setCutPath(cutPath);
+                    media.setCut(true);
+                    imageType = PictureMimeType.createImageType(cutPath);
+                    media.setPictureType(imageType);
+                    medias.add(media);
+                    handlerResult(medias);
+                }
+            } else if (config.camera) {
+                // 单独拍照
+                LocalMedia media = new LocalMedia(cameraPath, 0, false,
+                        config.isCamera ? 1 : 0, 0, config.mimeType);
+                media.setCut(true);
+                media.setCutPath(cutPath);
+                imageType = PictureMimeType.createImageType(cutPath);
+                media.setPictureType(imageType);
+                medias.add(media);
+                handlerResult(medias);
+            }
         }
+
     }
 
     /**

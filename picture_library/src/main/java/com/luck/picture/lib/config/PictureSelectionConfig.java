@@ -23,6 +23,7 @@ import java.util.List;
 public final class PictureSelectionConfig implements Parcelable {
     public int mimeType;
     public boolean camera;
+    public String inputImgPath;
     public String outputCameraPath;
     public String compressSavePath;
     public String suffixType;
@@ -65,6 +66,7 @@ public final class PictureSelectionConfig implements Parcelable {
     public boolean previewEggs;
     public boolean synOrAsy;
     public boolean isDragFrame;
+    public boolean directCrop;
 
     public List<LocalMedia> selectionMedias;
 
@@ -108,6 +110,8 @@ public final class PictureSelectionConfig implements Parcelable {
         synOrAsy = true;
         zoomAnim = true;
         isDragFrame = true;
+        directCrop = false;
+        inputImgPath = "";
         outputCameraPath = "";
         compressSavePath = "";
         suffixType = PictureFileUtils.POSTFIX;
@@ -138,6 +142,7 @@ public final class PictureSelectionConfig implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(this.mimeType);
         dest.writeByte(this.camera ? (byte) 1 : (byte) 0);
+        dest.writeString(this.inputImgPath);
         dest.writeString(this.outputCameraPath);
         dest.writeString(this.compressSavePath);
         dest.writeString(this.suffixType);
@@ -179,6 +184,7 @@ public final class PictureSelectionConfig implements Parcelable {
         dest.writeByte(this.previewEggs ? (byte) 1 : (byte) 0);
         dest.writeByte(this.synOrAsy ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isDragFrame ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.directCrop ? (byte) 1 : (byte) 0);
         dest.writeTypedList(this.selectionMedias);
     }
 
@@ -188,6 +194,7 @@ public final class PictureSelectionConfig implements Parcelable {
     protected PictureSelectionConfig(Parcel in) {
         this.mimeType = in.readInt();
         this.camera = in.readByte() != 0;
+        this.inputImgPath = in.readString();
         this.outputCameraPath = in.readString();
         this.compressSavePath = in.readString();
         this.suffixType = in.readString();
@@ -229,6 +236,7 @@ public final class PictureSelectionConfig implements Parcelable {
         this.previewEggs = in.readByte() != 0;
         this.synOrAsy = in.readByte() != 0;
         this.isDragFrame = in.readByte() != 0;
+        this.directCrop = in.readByte() != 0;
         this.selectionMedias = in.createTypedArrayList(LocalMedia.CREATOR);
     }
 

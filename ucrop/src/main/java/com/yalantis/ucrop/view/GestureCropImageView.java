@@ -23,6 +23,7 @@ public class GestureCropImageView extends CropImageView {
 
     private boolean mIsRotateEnabled = true, mIsScaleEnabled = true;
     private int mDoubleTapScaleSteps = 5;
+    private UCropView.OnChangeDataListener onChangeDataListener;
 
     public GestureCropImageView(Context context) {
         super(context);
@@ -128,12 +129,18 @@ public class GestureCropImageView extends CropImageView {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             zoomImageToPosition(getDoubleTapTargetScale(), e.getX(), e.getY(), DOUBLE_TAP_ZOOM_DURATION);
+            if(onChangeDataListener!=null){
+                onChangeDataListener.onChangeDataListener();
+            }
             return super.onDoubleTap(e);
         }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             postTranslate(-distanceX, -distanceY);
+            if(onChangeDataListener!=null){
+                onChangeDataListener.onChangeDataListener();
+            }
             return true;
         }
 
@@ -148,5 +155,7 @@ public class GestureCropImageView extends CropImageView {
         }
 
     }
-
+    public void setOnChangeDataListener(UCropView.OnChangeDataListener onChangeDataListener){
+        this.onChangeDataListener = onChangeDataListener;
+    }
 }

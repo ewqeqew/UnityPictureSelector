@@ -25,7 +25,7 @@
         android:id="@+id/ucrop_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/wrapper_controls"
+        android:layout_above="@+id/bottom_options"
         android:layout_below="@+id/toolbar"
         android:background="@color/ucrop_color_default_crop_frame">
 
@@ -45,5 +45,46 @@
             android:alpha="0" />
 
     </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/bottom_options"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/ucrop_color_crop_background"
+        >
+        <ImageView
+            android:id="@+id/turn_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/paizhao_btn_spin"
+            android:padding="15dp"
+            android:layout_marginTop="10dp"
+            />
+        <TextView
+            android:id="@+id/revert_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="@string/revert"
+            android:layout_alignParentBottom="true"
+            android:padding="15dp"
+            android:enabled="false"
+            android:textColor="@drawable/revert_text_select_color"
+            android:layout_marginBottom="15dp"
+            />
+        <TextView
+            android:id="@+id/sure_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="@string/sure_crop"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:padding="15dp"
+            android:textColor="@color/ucrop_color_toolbar_widget"
+            android:layout_marginBottom="15dp"
+            />
+
+    </RelativeLayout>
 
 </RelativeLayout>
