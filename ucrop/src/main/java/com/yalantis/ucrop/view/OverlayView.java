@@ -58,7 +58,8 @@ public class OverlayView extends View {
     private float mPreviousTouchX = -1, mPreviousTouchY = -1;
     private int mCurrentTouchCornerIndex = -1;
     private int mTouchPointThreshold;
-    private int mCropRectMinSize;
+    private int mCropRectMinHeight;
+    private int mCropRectMinWidth;
     private int mCropRectCornerTouchAreaLineLength;
 
     private OverlayViewChangeListener mCallback;
@@ -67,7 +68,7 @@ public class OverlayView extends View {
 
     {
         mTouchPointThreshold = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_threshold);
-        mCropRectMinSize = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_min_size);
+        mCropRectMinHeight = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_min_size);
         mCropRectCornerTouchAreaLineLength = getResources().getDimensionPixelSize(R.dimen.ucrop_default_crop_rect_corner_touch_area_line_length);
     }
 
@@ -201,6 +202,7 @@ public class OverlayView extends View {
      * @param targetAspectRatio - aspect ratio for image crop (e.g. 1.77(7) for 16:9)
      */
     public void setTargetAspectRatio(final float targetAspectRatio) {
+        mCropRectMinWidth = (int) (mCropRectMinHeight*targetAspectRatio);
         mTargetAspectRatio = targetAspectRatio;
         if (mThisWidth > 0) {
             setupCropBounds();
@@ -339,9 +341,9 @@ public class OverlayView extends View {
             case 0:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    if(Math.abs(touchX - mPreviousTouchX)>Math.abs(touchY - mPreviousTouchY)){
-                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.top+(touchX - mPreviousTouchX)*mTargetAspectRatio>=getPaddingTop()){
-                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top+(touchX - mPreviousTouchX)*mTargetAspectRatio, mCropViewRect.right, mCropViewRect.bottom);
+                    if(Math.abs(touchX - mPreviousTouchX)>Math.abs(touchY - mPreviousTouchY)/mTargetAspectRatio){
+                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.top+(touchX - mPreviousTouchX)/mTargetAspectRatio>=getPaddingTop()){
+                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top+(touchX - mPreviousTouchX)/mTargetAspectRatio, mCropViewRect.right, mCropViewRect.bottom);
                         }
                     }else{
                         if(mCropViewRect.top+(touchY - mPreviousTouchY)>=getPaddingTop()&&mCropViewRect.left+(touchY - mPreviousTouchY)*mTargetAspectRatio>=getPaddingLeft()){
@@ -353,9 +355,9 @@ public class OverlayView extends View {
             case 1:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
-                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.top - (touchX - mPreviousTouchX) * mTargetAspectRatio >= getPaddingTop()) {
-                            mTempRect.set(mCropViewRect.left, mCropViewRect.top - (touchX - mPreviousTouchX) * mTargetAspectRatio, mCropViewRect.right + touchX - mPreviousTouchX, mCropViewRect.bottom);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)/mTargetAspectRatio) {
+                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.top - (touchX - mPreviousTouchX) / mTargetAspectRatio >= getPaddingTop()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top - (touchX - mPreviousTouchX) / mTargetAspectRatio, mCropViewRect.right + touchX - mPreviousTouchX, mCropViewRect.bottom);
                         }
                     } else {
                         if (mCropViewRect.top + (touchY - mPreviousTouchY) >= getPaddingTop() && mCropViewRect.right - (touchY - mPreviousTouchY) * mTargetAspectRatio <= getWidth()-getPaddingRight()) {
@@ -367,9 +369,9 @@ public class OverlayView extends View {
             case 2:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
-                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.bottom+(touchX - mPreviousTouchX) * mTargetAspectRatio <= getHeight()-getPaddingBottom()) {
-                            mTempRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.right + (touchX - mPreviousTouchX), mCropViewRect.bottom+(touchX - mPreviousTouchX) * mTargetAspectRatio);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)/mTargetAspectRatio) {
+                        if (mCropViewRect.right + touchX - mPreviousTouchX <= getWidth()-getPaddingRight() && mCropViewRect.bottom+(touchX - mPreviousTouchX) / mTargetAspectRatio <= getHeight()-getPaddingBottom()) {
+                            mTempRect.set(mCropViewRect.left, mCropViewRect.top, mCropViewRect.right + (touchX - mPreviousTouchX), mCropViewRect.bottom+(touchX - mPreviousTouchX) / mTargetAspectRatio);
                         }
                     } else {
                         if (mCropViewRect.right + (touchY - mPreviousTouchY) * mTargetAspectRatio <= getWidth()-getPaddingRight() && mCropViewRect.bottom + (touchY - mPreviousTouchY) <= getHeight()-getPaddingBottom()) {
@@ -381,9 +383,9 @@ public class OverlayView extends View {
             case 3:
                 // 是否可拖动裁剪框
                 if (mIsDragFrame) {
-                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)) {
-                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.bottom - (touchX - mPreviousTouchX)*mTargetAspectRatio <= getHeight()-getPaddingBottom()){
-                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top, mCropViewRect.right, mCropViewRect.bottom-(touchX - mPreviousTouchX)*mTargetAspectRatio);
+                    if (Math.abs(touchX - mPreviousTouchX) > Math.abs(touchY - mPreviousTouchY)/mTargetAspectRatio) {
+                        if(mCropViewRect.left+touchX - mPreviousTouchX>=getPaddingLeft()&&mCropViewRect.bottom - (touchX - mPreviousTouchX)/mTargetAspectRatio <= getHeight()-getPaddingBottom()){
+                            mTempRect.set(mCropViewRect.left+touchX - mPreviousTouchX, mCropViewRect.top, mCropViewRect.right, mCropViewRect.bottom-(touchX - mPreviousTouchX)/mTargetAspectRatio);
                         }
                     } else {
                         if (mCropViewRect.left-(touchY - mPreviousTouchY)*mTargetAspectRatio >=getPaddingLeft() && mCropViewRect.bottom + (touchY - mPreviousTouchY) <= getHeight()-getPaddingBottom()) {
@@ -404,8 +406,8 @@ public class OverlayView extends View {
                 return;
         }
 
-        boolean changeHeight = mTempRect.height() >= mCropRectMinSize;
-        boolean changeWidth = mTempRect.width() >= mCropRectMinSize;
+        boolean changeHeight = mTempRect.height() >= mCropRectMinHeight;
+        boolean changeWidth = mTempRect.width() >= mCropRectMinWidth;
         mCropViewRect.set(
                 changeWidth ? mTempRect.left : mCropViewRect.left,
                 changeHeight ? mTempRect.top : mCropViewRect.top,
