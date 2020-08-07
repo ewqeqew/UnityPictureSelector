@@ -45,6 +45,15 @@
             android:alpha="0" />
 
     </FrameLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/ucrop_color_widget_background"
+        android:text="@string/crop_tip"
+        android:gravity="center"
+        android:padding="20dp"
+        android:layout_above="@+id/bottom_options"
+        />
     <RelativeLayout
         android:id="@+id/bottom_options"
         android:layout_width="match_parent"

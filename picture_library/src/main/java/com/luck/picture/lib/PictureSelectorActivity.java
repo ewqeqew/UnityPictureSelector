@@ -79,7 +79,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private TextView picture_title, picture_right, picture_tv_ok, tv_empty,
             picture_tv_img_num, picture_id_preview, tv_PlayPause, tv_Stop, tv_Quit,
             tv_musicStatus, tv_musicTotal, tv_musicTime;
-    private RelativeLayout rl_picture_title;
+    private RelativeLayout rl_picture_title,rl_bottom;
     private LinearLayout id_ll_ok;
     private RecyclerView picture_recycler;
     private PictureImageGridAdapter adapter;
@@ -207,6 +207,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         picture_title = findViewById(R.id.picture_title);
         picture_right = findViewById(R.id.picture_right);
         picture_tv_ok = findViewById(R.id.picture_tv_ok);
+        rl_bottom = findViewById(R.id.rl_bottom);
         picture_id_preview = findViewById(R.id.picture_id_preview);
         picture_tv_img_num = findViewById(R.id.picture_tv_img_num);
         picture_recycler = findViewById(R.id.picture_recycler);
@@ -511,38 +512,42 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         }
 
         if (id == R.id.id_ll_ok) {
-            List<LocalMedia> images = adapter.getSelectedImages();
-            LocalMedia image = images.size() > 0 ? images.get(0) : null;
-            String pictureType = image != null ? image.getPictureType() : "";
-            // 如果设置了图片最小选择数量，则判断是否满足条件
-            int size = images.size();
-            boolean eqImg = pictureType.startsWith(PictureConfig.IMAGE);
-            if (config.minSelectNum > 0 && config.selectionMode == PictureConfig.MULTIPLE) {
-                if (size < config.minSelectNum) {
-                    String str = eqImg ? getString(R.string.picture_min_img_num, config.minSelectNum)
-                            : getString(R.string.picture_min_video_num, config.minSelectNum);
-                    ToastManage.s(mContext, str);
-                    return;
-                }
+            toNextStep();
+        }
+    }
+
+    private void toNextStep() {
+        List<LocalMedia> images = adapter.getSelectedImages();
+        LocalMedia image = images.size() > 0 ? images.get(0) : null;
+        String pictureType = image != null ? image.getPictureType() : "";
+        // 如果设置了图片最小选择数量，则判断是否满足条件
+        int size = images.size();
+        boolean eqImg = pictureType.startsWith(PictureConfig.IMAGE);
+        if (config.minSelectNum > 0 && config.selectionMode == PictureConfig.MULTIPLE) {
+            if (size < config.minSelectNum) {
+                String str = eqImg ? getString(R.string.picture_min_img_num, config.minSelectNum)
+                        : getString(R.string.picture_min_video_num, config.minSelectNum);
+                ToastManage.s(mContext, str);
+                return;
             }
-            if (config.enableCrop && eqImg) {
-                if (config.selectionMode == PictureConfig.SINGLE) {
-                    originalPath = image.getPath();
-                    startCrop(originalPath);
-                } else {
-                    // 是图片和选择压缩并且是多张，调用批量压缩
-                    ArrayList<String> medias = new ArrayList<>();
-                    for (LocalMedia media : images) {
-                        medias.add(media.getPath());
-                    }
-                    startCrop(medias);
-                }
-            } else if (config.isCompress && eqImg) {
-                // 图片才压缩，视频不管
-                compressImage(images);
+        }
+        if (config.enableCrop && eqImg) {
+            if (config.selectionMode == PictureConfig.SINGLE) {
+                originalPath = image.getPath();
+                startCrop(originalPath);
             } else {
-                onResult(images);
+                // 是图片和选择压缩并且是多张，调用批量压缩
+                ArrayList<String> medias = new ArrayList<>();
+                for (LocalMedia media : images) {
+                    medias.add(media.getPath());
+                }
+                startCrop(medias);
             }
+        } else if (config.isCompress && eqImg) {
+            // 图片才压缩，视频不管
+            compressImage(images);
+        } else {
+            onResult(images);
         }
     }
 
@@ -845,11 +850,14 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         String pictureType = selectImages.size() > 0
                 ? selectImages.get(0).getPictureType() : "";
         if (config.mimeType == PictureMimeType.ofAudio()) {
-            picture_id_preview.setVisibility(View.GONE);
+            rl_bottom.setVisibility(View.GONE);
         } else {
             boolean isVideo = PictureMimeType.isVideo(pictureType);
             boolean eqVideo = config.mimeType == PictureConfig.TYPE_VIDEO;
-            picture_id_preview.setVisibility(isVideo || eqVideo ? View.GONE : View.VISIBLE);
+            rl_bottom.setVisibility(isVideo || eqVideo ? View.GONE : View.VISIBLE);
+        }
+        if(config.enableCrop){
+            rl_bottom.setVisibility(View.GONE);
         }
         boolean enable = selectImages.size() != 0;
         if (enable) {
@@ -868,6 +876,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                 picture_tv_ok.setText(getString
                         (R.string.picture_completed,selectImages.size()));
                 anim = false;
+            }
+            if(rl_bottom.getVisibility()==View.GONE){
+                toNextStep();
             }
         } else {
             id_ll_ok.setEnabled(false);
@@ -903,6 +914,10 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         } else if (resultCode == RESULT_CANCELED) {
             if (config.camera||config.directCrop) {
                 closeActivity();
+            }
+            if(rl_bottom.getVisibility()==View.GONE){
+                adapter.getSelectedImages().clear();
+                adapter.notifyDataSetChanged();
             }
         } else if (resultCode == UCrop.RESULT_ERROR) {
             Throwable throwable = (Throwable) data.getSerializableExtra(UCrop.EXTRA_ERROR);

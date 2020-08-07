@@ -191,6 +191,11 @@ public class PictureImageGridAdapter extends RecyclerView.Adapter<RecyclerView.V
                 contentHolder.count_select_tv.setVisibility(View.GONE);
                 contentHolder.check.setVisibility(View.VISIBLE);
             }
+            if(config.enableCrop||mediaMimeType == PictureConfig.TYPE_VIDEO){
+                contentHolder.check.setVisibility(View.GONE);
+            }else{
+                contentHolder.check.setVisibility(View.VISIBLE);
+            }
             if (mimeType == PictureMimeType.ofAudio()) {
                 contentHolder.iv_picture.setImageResource(R.drawable.audio_placeholder);
             } else {
