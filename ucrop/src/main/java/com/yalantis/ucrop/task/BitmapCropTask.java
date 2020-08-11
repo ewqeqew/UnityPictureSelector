@@ -184,20 +184,20 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         }
     }
 
-    private void drawBlackAtBound(){
+    private void drawBlackAtBound() {
         //图片左边在边框内
-        if( mCurrentImageRect.left>mCropRect.left){
+        if (mCurrentImageRect.left > mCropRect.left) {
             Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() - cropOffsetX), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bitmap);
-            canvas.drawBitmap(mViewBitmap, -cropOffsetX, 0,null);
+            canvas.drawBitmap(mViewBitmap, -cropOffsetX, 0, null);
             mViewBitmap = bitmap;
             cropOffsetX = 0;
         }
         //图片右边在边框内
-        if(mCurrentImageRect.right < mCropRect.right){
+        if (mCurrentImageRect.right < mCropRect.right) {
             Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() + mCroppedImageWidth), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bitmap);
-            canvas.drawBitmap(mViewBitmap, 0, 0,null);
+            canvas.drawBitmap(mViewBitmap, 0, 0, null);
             mViewBitmap = bitmap;
         }
     }
