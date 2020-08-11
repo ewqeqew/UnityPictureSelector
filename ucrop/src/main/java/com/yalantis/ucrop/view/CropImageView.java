@@ -41,7 +41,8 @@ public class CropImageView extends TransformImageView {
     public static final float DEFAULT_MAX_SCALE_MULTIPLIER = 10.0f;
     public static final float SOURCE_IMAGE_ASPECT_RATIO = 0f;
     public static final float DEFAULT_ASPECT_RATIO = SOURCE_IMAGE_ASPECT_RATIO;
-
+    //最小裁剪宽度
+    public static final float MIN_CROP_WIDTH = 200.0f;
     private final RectF mCropRect = new RectF();
 
     private final Matrix mTempMatrix = new Matrix();
@@ -296,10 +297,21 @@ public class CropImageView extends TransformImageView {
             mTempMatrix.mapPoints(tempCurrentImageCorners);
 
             boolean willImageWrapCropBoundsAfterTranslate = isImageWrapCropBounds(tempCurrentImageCorners);
-
+            //不考虑是否适配裁剪框
+            willImageWrapCropBoundsAfterTranslate = true;
             if (willImageWrapCropBoundsAfterTranslate) {
                 final float[] imageIndents = calculateImageIndents();
                 deltaX = -(imageIndents[0] + imageIndents[2]);
+                //不考虑x轴偏移量,但是不能跑外边去了,最好留点边
+                if(Math.abs(deltaX)>mCropRect.width()-MIN_CROP_WIDTH){
+                    if(deltaX<0){
+                        deltaX = mCropRect.width()-Math.abs(deltaX)-MIN_CROP_WIDTH;
+                    }else{
+                        deltaX = Math.abs(deltaX)-mCropRect.width()+MIN_CROP_WIDTH;
+                    }
+                }else{
+                    deltaX = 0;
+                }
                 deltaY = -(imageIndents[1] + imageIndents[3]);
             } else {
                 RectF tempCropRect = new RectF(mCropRect);
@@ -313,7 +325,8 @@ public class CropImageView extends TransformImageView {
                         tempCropRect.height() / currentImageSides[1]);
                 deltaScale = deltaScale * currentScale - currentScale;
             }
-
+            //不考虑图片是否适配裁剪框
+            willImageWrapCropBoundsAfterTranslate = true;
             if (animate) {
                 post(mWrapCropBoundsRunnable = new WrapCropBoundsRunnable(
                         CropImageView.this, mImageToWrapCropBoundsAnimDuration, currentX, currentY, deltaX, deltaY,
@@ -472,6 +485,8 @@ public class CropImageView extends TransformImageView {
         float heightScale = Math.min(mCropRect.height() / drawableHeight, mCropRect.height() / drawableWidth);
 
         mMinScale = Math.min(widthScale, heightScale);
+        //适配高度的最小缩放值
+        mMinScale = mCropRect.height() / drawableHeight;
         mMaxScale = mMinScale * mMaxScaleMultiplier;
     }
 
@@ -646,9 +661,9 @@ public class CropImageView extends TransformImageView {
         private float lastAngle;
 
         public RotateImageToRotation(CropImageView cropImageView,
-                                   long durationMs,
-                                   float angle,
-                                   float destX, float destY) {
+                                     long durationMs,
+                                     float angle,
+                                     float destX, float destY) {
 
             mCropImageView = new WeakReference<>(cropImageView);
 

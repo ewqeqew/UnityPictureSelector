@@ -2,6 +2,7 @@ package com.yalantis.ucrop.task;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.media.ExifInterface;
@@ -159,12 +160,14 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
                             mContext.get().getContentResolver().openFileDescriptor(mImageInputUri, "r");
                     originalExif = new ExifInterface(parcelFileDescriptor.getFileDescriptor());
                 }
+                drawBlackAtBound();
                 saveImage(Bitmap.createBitmap(mViewBitmap, cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight));
                 if (mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
                     ImageHeaderParser.copyExif(originalExif, mCroppedImageWidth, mCroppedImageHeight, mImageOutputPath);
                 }
             } else {
                 originalExif = new ExifInterface(mImageInputUri.getPath());
+                drawBlackAtBound();
                 saveImage(Bitmap.createBitmap(mViewBitmap, cropOffsetX, cropOffsetY, mCroppedImageWidth, mCroppedImageHeight));
                 if (mCompressFormat.equals(Bitmap.CompressFormat.JPEG)) {
                     ImageHeaderParser.copyExif(originalExif, mCroppedImageWidth, mCroppedImageHeight, mImageOutputPath);
@@ -178,6 +181,24 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
                 FileUtils.copyFile(mImageInputUri.getPath(), mImageOutputPath);
             }
             return false;
+        }
+    }
+
+    private void drawBlackAtBound(){
+        //图片左边在边框内
+        if( mCurrentImageRect.left>mCropRect.left){
+            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() - cropOffsetX), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawBitmap(mViewBitmap, -cropOffsetX, 0,null);
+            mViewBitmap = bitmap;
+            cropOffsetX = 0;
+        }
+        //图片右边在边框内
+        if(mCurrentImageRect.right < mCropRect.right){
+            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() + mCroppedImageWidth), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.drawBitmap(mViewBitmap, 0, 0,null);
+            mViewBitmap = bitmap;
         }
     }
 
