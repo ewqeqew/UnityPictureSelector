@@ -39,6 +39,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.model.AspectRatio;
 import com.yalantis.ucrop.util.SelectedStateListDrawable;
@@ -103,6 +104,8 @@ public class UCropActivity extends AppCompatActivity {
     private boolean mShowLoader = true;
 
     private UCropView mUCropView;
+    private RelativeLayout loadingBg;
+    private ImageView loadingIv;
     private GestureCropImageView mGestureCropImageView;
     private OverlayView mOverlayView;
     private ViewGroup mWrapperStateAspectRatio, mWrapperStateRotate, mWrapperStateScale;
@@ -171,7 +174,7 @@ public class UCropActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
 //        menu.findItem(R.id.menu_crop).setVisible(!mShowLoader);
         menu.findItem(R.id.menu_crop).setVisible(false);
-        menu.findItem(R.id.menu_loader).setVisible(mShowLoader);
+        menu.findItem(R.id.menu_loader).setVisible(false);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -375,6 +378,8 @@ public class UCropActivity extends AppCompatActivity {
 
     private void initiateRootViews() {
         mUCropView = (UCropView) findViewById(R.id.ucrop);
+        loadingBg = (RelativeLayout) findViewById(R.id.loading_bg);
+        loadingIv = (ImageView) findViewById(R.id.loading_iv);
         mGestureCropImageView = mUCropView.getCropImageView();
         mOverlayView = mUCropView.getOverlayView();
         findViewById(R.id.turn_pic).setOnClickListener(new View.OnClickListener() {
@@ -411,6 +416,7 @@ public class UCropActivity extends AppCompatActivity {
             }
         });
         mGestureCropImageView.setTransformImageListener(mImageListener);
+        Glide.with(this).load(R.drawable.loading).into(loadingIv);
 //
 //        ((ImageView) findViewById(R.id.image_view_logo)).setColorFilter(mLogoColor, PorterDuff.Mode.SRC_ATOP);
 //
@@ -433,6 +439,7 @@ public class UCropActivity extends AppCompatActivity {
             mUCropView.animate().alpha(1).setDuration(300).setInterpolator(new AccelerateInterpolator());
             mBlockingView.setClickable(false);
             mShowLoader = false;
+            loadingBg.setVisibility(View.GONE);
             supportInvalidateOptionsMenu();
         }
 
