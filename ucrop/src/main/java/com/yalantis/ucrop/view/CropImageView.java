@@ -325,8 +325,6 @@ public class CropImageView extends TransformImageView {
                         tempCropRect.height() / currentImageSides[1]);
                 deltaScale = deltaScale * currentScale - currentScale;
             }
-            //不考虑图片是否适配裁剪框
-            willImageWrapCropBoundsAfterTranslate = true;
             if (animate) {
                 post(mWrapCropBoundsRunnable = new WrapCropBoundsRunnable(
                         CropImageView.this, mImageToWrapCropBoundsAnimDuration, currentX, currentY, deltaX, deltaY,
@@ -504,7 +502,9 @@ public class CropImageView extends TransformImageView {
         float widthScale = mCropRect.width() / drawableWidth;
         float heightScale = mCropRect.height() / drawableHeight;
 
-        float initialMinScale = Math.max(widthScale, heightScale);
+//        float initialMinScale = Math.max(widthScale, heightScale);
+        //默认做高度的全缩放，产品的变态需求
+        float initialMinScale = heightScale;
 
         float tw = (cropRectWidth - drawableWidth * initialMinScale) / 2.0f + mCropRect.left;
         float th = (cropRectHeight - drawableHeight * initialMinScale) / 2.0f + mCropRect.top;
