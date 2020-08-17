@@ -1064,10 +1064,10 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             imageType = PictureMimeType.createImageType(cutPath);
             media.setPictureType(imageType);
             medias.add(media);
-//            handlerResult(medias);
-            Intent intent = PictureSelector.putIntentResult(medias);
-            setResult(RESULT_OK, intent);
-            closeActivity();
+            handlerResult(medias);
+//            Intent intent = PictureSelector.putIntentResult(medias);
+//            setResult(RESULT_OK, intent);
+//            closeActivity();
         }else{
             if (adapter != null) {
                 // 取单张裁剪已选中图片的path作为原图
