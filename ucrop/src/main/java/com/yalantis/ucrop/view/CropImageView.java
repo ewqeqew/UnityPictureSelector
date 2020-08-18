@@ -313,6 +313,12 @@ public class CropImageView extends TransformImageView {
                     deltaX = 0;
                 }
                 deltaY = -(imageIndents[1] + imageIndents[3]);
+                //已经缩放到最小高度，旋转之后可能会小于最小高度，需要重新缩放
+                if (RectUtils.trapToRect(tempCurrentImageCorners).height() < mCropRect.height()) {
+                    deltaScale = mCropRect.height()/RectUtils.trapToRect(tempCurrentImageCorners).height();
+                    deltaScale = deltaScale * currentScale + currentScale;
+                    willImageWrapCropBoundsAfterTranslate = false;
+                }
             } else {
                 RectF tempCropRect = new RectF(mCropRect);
                 mTempMatrix.reset();
@@ -484,7 +490,12 @@ public class CropImageView extends TransformImageView {
 
         mMinScale = Math.min(widthScale, heightScale);
         //适配高度的最小缩放值
-        mMinScale = mCropRect.height() / drawableHeight;
+        if(Math.abs(90-Math.abs(getCurrentAngle()))<=10){
+            mMinScale = mCropRect.height() / drawableWidth;
+        }else{
+            mMinScale = mCropRect.height() / drawableHeight;
+        }
+
         mMaxScale = mMinScale * mMaxScaleMultiplier;
     }
 
@@ -699,6 +710,8 @@ public class CropImageView extends TransformImageView {
 //                totalAngle = totalAngle+(mDeltaAngle-lastAngle);
 //                Log.d("总共旋转",totalAngle+"");
                 cropImageView.setImageToWrapCropBounds();
+                //旋转之后重新计算最小缩放值
+                cropImageView.calculateImageScaleBounds();
             }
         }
 

@@ -618,7 +618,7 @@ public class UCropActivity extends AppCompatActivity {
 
     private void rotateByAngle(int angle) {
         mGestureCropImageView.postRotate(angle);
-        mGestureCropImageView.setImageToWrapCropBounds();
+//        mGestureCropImageView.setImageToWrapCropBounds();
     }
 
     private final View.OnClickListener mStateClickListener = new View.OnClickListener() {
