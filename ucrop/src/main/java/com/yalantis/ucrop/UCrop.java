@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.yalantis.ucrop.model.AspectRatio;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -117,7 +118,11 @@ public class UCrop {
      * @param activity Activity to receive result
      */
     public void start(@NonNull Activity activity) {
-        start(activity, REQUEST_CROP);
+        start(activity,UCropActivity.class);
+    }
+
+    public void start(@NonNull Activity activity,Class aClass) {
+        start(activity,aClass, REQUEST_CROP);
     }
 
     /**
@@ -126,8 +131,8 @@ public class UCrop {
      * @param activity    Activity to receive result
      * @param requestCode requestCode for result
      */
-    public void start(@NonNull Activity activity, int requestCode) {
-        activity.startActivityForResult(getIntent(activity), requestCode);
+    public void start(@NonNull Activity activity,Class aClass, int requestCode) {
+        activity.startActivityForResult(getIntent(activity,aClass), requestCode);
     }
 
     /**
@@ -154,8 +159,12 @@ public class UCrop {
      *
      * @return Intent for {@link UCropActivity}
      */
-    public Intent getIntent(@NonNull Context context) {
-        mCropIntent.setClass(context, UCropActivity.class);
+    private Intent getIntent(@NonNull Context context) {
+        return getIntent(context,UCropActivity.class);
+    }
+
+    public Intent getIntent(@NonNull Context context,Class aClass) {
+        mCropIntent.setClass(context, aClass);
         mCropIntent.putExtras(mCropOptionsBundle);
         return mCropIntent;
     }
@@ -265,6 +274,8 @@ public class UCrop {
         public static final String EXTRA_SCALE = EXTRA_PREFIX + ".scale";
 
         public static final String EXTRA_DRAG_CROP_FRAME = EXTRA_PREFIX + ".DragCropFrame";
+
+        public static final String EXTRA_USE_ALPHA = EXTRA_PREFIX + ".UseAlpha";
 
         private final Bundle mOptionBundle;
 
@@ -551,6 +562,9 @@ public class UCrop {
             mOptionBundle.putInt(EXTRA_MAX_SIZE_Y, height);
         }
 
+        public void setUseAlpha(boolean useAlpha) {
+            mOptionBundle.putBoolean(EXTRA_USE_ALPHA, useAlpha);
+        }
     }
 
 }

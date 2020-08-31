@@ -28,9 +28,7 @@
         <activity android:name=".PictureExternalPreviewActivity"
             android:screenOrientation="portrait"/>
         <activity android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-             android:theme="@style/AppTheme"
-            />
+            android:screenOrientation="portrait"/>
         <activity android:name="com.yalantis.ucrop.PictureMultiCuttingActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".PicturePlayAudioActivity"

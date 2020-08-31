@@ -15,9 +15,10 @@ public class CropParameters {
     private Uri mImageInputUri;
     private String mImageOutputPath;
     private ExifInfo mExifInfo;
+    private boolean mUseAlpha;
 
 
-    public CropParameters(int maxResultImageSizeX, int maxResultImageSizeY,
+    public CropParameters(int maxResultImageSizeX, int maxResultImageSizeY,boolean useAlpha,
                           Bitmap.CompressFormat compressFormat, int compressQuality,
                           Uri imageInputUri, String imageOutputPath, ExifInfo exifInfo) {
         mMaxResultImageSizeX = maxResultImageSizeX;
@@ -27,6 +28,7 @@ public class CropParameters {
         mImageInputUri = imageInputUri;
         mImageOutputPath = imageOutputPath;
         mExifInfo = exifInfo;
+        mUseAlpha = useAlpha;
     }
 
     public int getMaxResultImageSizeX() {
@@ -57,4 +59,7 @@ public class CropParameters {
         return mExifInfo;
     }
 
+    public boolean isUseAlpha() {
+        return mUseAlpha;
+    }
 }

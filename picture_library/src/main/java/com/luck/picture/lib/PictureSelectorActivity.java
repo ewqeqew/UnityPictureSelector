@@ -856,7 +856,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             boolean eqVideo = config.mimeType == PictureConfig.TYPE_VIDEO;
             rl_bottom.setVisibility(isVideo || eqVideo ? View.GONE : View.VISIBLE);
         }
-        if(config.enableCrop){
+        if(!config.enablePreview){
             rl_bottom.setVisibility(View.GONE);
         }
         boolean enable = selectImages.size() != 0;

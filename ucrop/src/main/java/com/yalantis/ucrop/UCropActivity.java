@@ -130,7 +130,7 @@ public class UCropActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ucrop_activity_photobox);
+        setContentView(getLayoutId());
 
         final Intent intent = getIntent();
 
@@ -138,6 +138,10 @@ public class UCropActivity extends AppCompatActivity {
         setImageData(intent);
         setInitialState();
         addBlockingView();
+    }
+
+    protected int getLayoutId(){
+        return R.layout.ucrop_activity_photobox;
     }
 
     @Override
@@ -208,7 +212,7 @@ public class UCropActivity extends AppCompatActivity {
             try {
                 mGestureCropImageView.setRotateEnabled(rotateEnabled);
                 mGestureCropImageView.setScaleEnabled(scaleEnabled);
-                mGestureCropImageView.setImageUri(inputUri, outputUri);
+                loadImg(inputUri, outputUri);
             } catch (Exception e) {
                 setResultError(e);
                 closeActivity();
@@ -219,6 +223,14 @@ public class UCropActivity extends AppCompatActivity {
         }
     }
 
+    public void loadImg(Uri inputUri,Uri outputUri){
+        try {
+            mGestureCropImageView.setImageUri(inputUri, outputUri);
+        } catch (Exception e) {
+            setResultError(e);
+            closeActivity();
+        }
+    }
     /**
      * This method extracts {@link com.yalantis.ucrop.UCrop.Options #optionsBundle} from incoming intent
      * and setups Activity, {@link OverlayView} and {@link CropImageView} properly.
@@ -291,6 +303,7 @@ public class UCropActivity extends AppCompatActivity {
             mGestureCropImageView.setMaxResultImageSizeX(maxSizeX);
             mGestureCropImageView.setMaxResultImageSizeY(maxSizeY);
         }
+        mGestureCropImageView.setUseAlpha(intent.getBooleanExtra(UCrop.Options.EXTRA_DRAG_CROP_FRAME, false));
     }
 
     private void setupViews(@NonNull Intent intent) {

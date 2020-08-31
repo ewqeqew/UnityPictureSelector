@@ -57,6 +57,7 @@ public class CropImageView extends TransformImageView {
     private float mMaxScale, mMinScale;
     private int mMaxResultImageSizeX = 0, mMaxResultImageSizeY = 0;
     private long mImageToWrapCropBoundsAnimDuration = DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION;
+    private boolean mUseAlpha;
 
     public CropImageView(Context context) {
         this(context, null);
@@ -84,13 +85,16 @@ public class CropImageView extends TransformImageView {
                 getCurrentScale(), getCurrentAngle());
 
         final CropParameters cropParameters = new CropParameters(
-                mMaxResultImageSizeX, mMaxResultImageSizeY,
+                mMaxResultImageSizeX, mMaxResultImageSizeY,mUseAlpha,
                 compressFormat, compressQuality,
                 getImageInputUri(), getImageOutputPath(), getExifInfo());
 
         new BitmapCropTask(getContext(), getViewBitmap(), imageState, cropParameters, cropCallback).execute();
     }
 
+    public void setUseAlpha(boolean mUseAlpha){
+        this.mUseAlpha = mUseAlpha; 
+    }
     /**
      * @return - maximum scale value for current image and crop ratio
      */
@@ -672,9 +676,9 @@ public class CropImageView extends TransformImageView {
         private float lastAngle;
 
         public RotateImageToRotation(CropImageView cropImageView,
-                                     long durationMs,
-                                     float angle,
-                                     float destX, float destY) {
+                                   long durationMs,
+                                   float angle,
+                                   float destX, float destY) {
 
             mCropImageView = new WeakReference<>(cropImageView);
 

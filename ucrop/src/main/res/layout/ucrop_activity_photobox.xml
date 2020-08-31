@@ -67,8 +67,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/paizhao_btn_spin"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
             android:padding="15dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="15dp"
             />
         <TextView
             android:id="@+id/revert_tv"

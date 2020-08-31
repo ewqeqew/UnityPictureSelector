@@ -41,6 +41,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     private static final String TAG = "BitmapCropTask";
 
     private final WeakReference<Context> mContext;
+    private final boolean mUseAlpha;
 
     private Bitmap mViewBitmap;
 
@@ -73,6 +74,8 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         mCurrentAngle = imageState.getCurrentAngle();
         mMaxResultImageSizeX = cropParameters.getMaxResultImageSizeX();
         mMaxResultImageSizeY = cropParameters.getMaxResultImageSizeY();
+
+        mUseAlpha = cropParameters.isUseAlpha();
 
         mCompressFormat = cropParameters.getCompressFormat();
         mCompressQuality = cropParameters.getCompressQuality();
@@ -187,7 +190,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
     private void drawBlackAtBound() {
         //图片左边在边框内
         if (mCurrentImageRect.left > mCropRect.left) {
-            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() - cropOffsetX), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
+            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() - cropOffsetX), mViewBitmap.getHeight(), mUseAlpha ? Bitmap.Config.ARGB_4444 : Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bitmap);
             canvas.drawBitmap(mViewBitmap, -cropOffsetX, 0, null);
             mViewBitmap = bitmap;
@@ -195,7 +198,7 @@ public class BitmapCropTask extends AsyncTask<Void, Void, Throwable> {
         }
         //图片右边在边框内
         if (mCurrentImageRect.right < mCropRect.right) {
-            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() + mCroppedImageWidth), mViewBitmap.getHeight(), Bitmap.Config.RGB_565);
+            Bitmap bitmap = Bitmap.createBitmap((mViewBitmap.getWidth() + mCroppedImageWidth), mViewBitmap.getHeight(), mUseAlpha ? Bitmap.Config.ARGB_4444 : Bitmap.Config.RGB_565);
             Canvas canvas = new Canvas(bitmap);
             canvas.drawBitmap(mViewBitmap, 0, 0, null);
             mViewBitmap = bitmap;
