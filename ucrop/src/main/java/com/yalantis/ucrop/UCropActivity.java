@@ -103,7 +103,7 @@ public class UCropActivity extends AppCompatActivity {
     private boolean mShowBottomControls;
     private boolean mShowLoader = true;
 
-    private UCropView mUCropView;
+    protected UCropView mUCropView;
     private RelativeLayout loadingBg;
     private ImageView loadingIv;
     private GestureCropImageView mGestureCropImageView;
@@ -212,7 +212,7 @@ public class UCropActivity extends AppCompatActivity {
             try {
                 mGestureCropImageView.setRotateEnabled(rotateEnabled);
                 mGestureCropImageView.setScaleEnabled(scaleEnabled);
-                loadImg(inputUri, outputUri);
+                mGestureCropImageView.setImageUri(inputUri, outputUri);
             } catch (Exception e) {
                 setResultError(e);
                 closeActivity();
@@ -223,14 +223,6 @@ public class UCropActivity extends AppCompatActivity {
         }
     }
 
-    public void loadImg(Uri inputUri,Uri outputUri){
-        try {
-            mGestureCropImageView.setImageUri(inputUri, outputUri);
-        } catch (Exception e) {
-            setResultError(e);
-            closeActivity();
-        }
-    }
     /**
      * This method extracts {@link com.yalantis.ucrop.UCrop.Options #optionsBundle} from incoming intent
      * and setups Activity, {@link OverlayView} and {@link CropImageView} properly.
@@ -303,7 +295,7 @@ public class UCropActivity extends AppCompatActivity {
             mGestureCropImageView.setMaxResultImageSizeX(maxSizeX);
             mGestureCropImageView.setMaxResultImageSizeY(maxSizeY);
         }
-        mGestureCropImageView.setUseAlpha(intent.getBooleanExtra(UCrop.Options.EXTRA_DRAG_CROP_FRAME, false));
+        mGestureCropImageView.setUseAlpha(intent.getBooleanExtra(UCrop.Options.EXTRA_USE_ALPHA, false));
     }
 
     private void setupViews(@NonNull Intent intent) {
@@ -436,6 +428,10 @@ public class UCropActivity extends AppCompatActivity {
 //        findViewById(R.id.ucrop_frame).setBackgroundColor(mRootViewBackgroundColor);
     }
 
+    public void clearData(){
+        revertTextView.setEnabled(false);
+        mUCropView.clearAllChange();
+    }
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
         @Override
         public void onRotate(float currentAngle) {
@@ -730,8 +726,15 @@ public class UCropActivity extends AppCompatActivity {
         closeActivity();
     }
 
+    @Override
+    public void onBackPressed() {
+        setResult(UCrop.RESULT_ERROR, new Intent().putExtra(UCrop.EXTRA_ERROR, new Throwable()));
+        closeActivity();
+    }
+
     protected void setResultError(Throwable throwable) {
         setResult(UCrop.RESULT_ERROR, new Intent().putExtra(UCrop.EXTRA_ERROR, throwable));
+        closeActivity();
     }
 
     protected void closeActivity() {

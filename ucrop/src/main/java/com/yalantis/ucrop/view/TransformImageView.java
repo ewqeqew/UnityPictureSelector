@@ -342,4 +342,8 @@ public class TransformImageView extends ImageView {
         mCurrentImageMatrix.mapPoints(mCurrentImageCenter, mInitialImageCenter);
     }
 
+    public void clearLoadStatus(){
+        mBitmapDecoded = false;
+        mBitmapLaidOut = false;
+    }
 }

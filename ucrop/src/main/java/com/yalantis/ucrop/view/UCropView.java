@@ -73,6 +73,10 @@ public class UCropView extends FrameLayout {
         mGestureCropImageView.setImageMatrix(initMatrix);
         mViewOverlay.setTargetAspectRatio(mGestureCropImageView.getTargetAspectRatio());
     }
+    public void clearAllChange(){
+        initMatrix = null;
+        mGestureCropImageView.clearLoadStatus();
+    }
 
     public void setOnChangeDataListener(OnChangeDataListener onChangeDataListener){
         this.onChangeDataListener = onChangeDataListener;
@@ -92,7 +96,6 @@ public class UCropView extends FrameLayout {
     public OverlayView getOverlayView() {
         return mViewOverlay;
     }
-
 
     public interface OnChangeDataListener{
         public void onChangeDataListener();
