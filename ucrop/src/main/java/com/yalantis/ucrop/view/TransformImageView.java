@@ -70,6 +70,13 @@ public class TransformImageView extends ImageView {
         void onScale(float currentScale);
 
     }
+    public interface LoadImageListener {
+
+        void onLoadComplete();
+
+        void onLoadFailure(@NonNull Exception e);
+
+    }
 
     public TransformImageView(Context context) {
         this(context, null);
@@ -131,13 +138,16 @@ public class TransformImageView extends ImageView {
         return mExifInfo;
     }
 
+    public void setImageUri(@NonNull Uri imageUri, @Nullable Uri outputUri) throws Exception {
+        setImageUri(imageUri,outputUri,null);
+    }
     /**
      * This method takes an Uri as a parameter, then calls method to decode it into Bitmap with specified size.
      *
      * @param imageUri - image Uri
      * @throws Exception - can throw exception if having problems with decoding Uri or OOM.
      */
-    public void setImageUri(@NonNull Uri imageUri, @Nullable Uri outputUri) throws Exception {
+    public void setImageUri(@NonNull Uri imageUri, @Nullable Uri outputUri, final LoadImageListener loadImageListener) throws Exception {
         int maxBitmapSize = getMaxBitmapSize();
 
         BitmapLoadUtils.decodeBitmapInBackground(getContext(), imageUri, outputUri, maxBitmapSize, maxBitmapSize,
@@ -151,6 +161,9 @@ public class TransformImageView extends ImageView {
 
                         mBitmapDecoded = true;
                         setImageBitmap(bitmap);
+                        if(loadImageListener!=null){
+                            loadImageListener.onLoadComplete();
+                        }
                     }
 
                     @Override
@@ -158,6 +171,9 @@ public class TransformImageView extends ImageView {
                         Log.e(TAG, "onFailure: setImageUri", bitmapWorkerException);
                         if (mTransformImageListener != null) {
                             mTransformImageListener.onLoadFailure(bitmapWorkerException);
+                        }
+                        if(loadImageListener!=null){
+                            loadImageListener.onLoadFailure(bitmapWorkerException);
                         }
                     }
                 });
@@ -340,10 +356,5 @@ public class TransformImageView extends ImageView {
     private void updateCurrentImagePoints() {
         mCurrentImageMatrix.mapPoints(mCurrentImageCorners, mInitialImageCorners);
         mCurrentImageMatrix.mapPoints(mCurrentImageCenter, mInitialImageCenter);
-    }
-
-    public void clearLoadStatus(){
-        mBitmapDecoded = false;
-        mBitmapLaidOut = false;
     }
 }

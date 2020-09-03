@@ -428,10 +428,6 @@ public class UCropActivity extends AppCompatActivity {
 //        findViewById(R.id.ucrop_frame).setBackgroundColor(mRootViewBackgroundColor);
     }
 
-    public void clearData(){
-        revertTextView.setEnabled(false);
-        mUCropView.clearAllChange();
-    }
     private TransformImageView.TransformImageListener mImageListener = new TransformImageView.TransformImageListener() {
         @Override
         public void onRotate(float currentAngle) {
