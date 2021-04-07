@@ -1174,7 +1174,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         if (RxBus.getDefault().isRegistered(this)) {
             RxBus.getDefault().unregister(this);
         }
-        ImagesObservable.getInstance().clearLocalMedia();
+//        ImagesObservable.getInstance().clearLocalMedia();
         if (animation != null) {
             animation.cancel();
             animation = null;
